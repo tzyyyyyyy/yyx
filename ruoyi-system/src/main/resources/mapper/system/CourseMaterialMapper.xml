@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.CourseMaterialMapper">
+    
+    <resultMap type="CourseMaterial" id="CourseMaterialResult">
+        <result property="materialId"    column="material_id"    />
+        <result property="courseName"    column="course_name"    />
+        <result property="teacherName"    column="teacher_name"    />
+        <result property="materialTitle"    column="material_title"    />
+        <result property="materialUrl"    column="material_url"    />
+        <result property="uploadTime"    column="upload_time"    />
+        <result property="description"    column="description"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectCourseMaterialVo">
+        select material_id, course_name, teacher_name, material_title, material_url, upload_time, description, update_time from course_material
+    </sql>
+
+    <select id="selectCourseMaterialList" parameterType="CourseMaterial" resultMap="CourseMaterialResult">
+        <include refid="selectCourseMaterialVo"/>
+        <where>  
+            <if test="courseName != null  and courseName != ''"> and course_name like concat('%', #{courseName}, '%')</if>
+            <if test="materialTitle != null  and materialTitle != ''"> and material_title = #{materialTitle}</if>
+        </where>
+    </select>
+    
+    <select id="selectCourseMaterialByMaterialId" parameterType="String" resultMap="CourseMaterialResult">
+        <include refid="selectCourseMaterialVo"/>
+        where material_id = #{materialId}
+    </select>
+
+    <insert id="insertCourseMaterial" parameterType="CourseMaterial">
+        insert into course_material
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="materialId != null">material_id,</if>
+            <if test="courseName != null and courseName != ''">course_name,</if>
+            <if test="teacherName != null and teacherName != ''">teacher_name,</if>
+            <if test="materialTitle != null and materialTitle != ''">material_title,</if>
+            <if test="materialUrl != null and materialUrl != ''">material_url,</if>
+            <if test="uploadTime != null">upload_time,</if>
+            <if test="description != null">description,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="materialId != null">#{materialId},</if>
+            <if test="courseName != null and courseName != ''">#{courseName},</if>
+            <if test="teacherName != null and teacherName != ''">#{teacherName},</if>
+            <if test="materialTitle != null and materialTitle != ''">#{materialTitle},</if>
+            <if test="materialUrl != null and materialUrl != ''">#{materialUrl},</if>
+            <if test="uploadTime != null">#{uploadTime},</if>
+            <if test="description != null">#{description},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCourseMaterial" parameterType="CourseMaterial">
+        update course_material
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="courseName != null and courseName != ''">course_name = #{courseName},</if>
+            <if test="teacherName != null and teacherName != ''">teacher_name = #{teacherName},</if>
+            <if test="materialTitle != null and materialTitle != ''">material_title = #{materialTitle},</if>
+            <if test="materialUrl != null and materialUrl != ''">material_url = #{materialUrl},</if>
+            <if test="uploadTime != null">upload_time = #{uploadTime},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where material_id = #{materialId}
+    </update>
+
+    <delete id="deleteCourseMaterialByMaterialId" parameterType="String">
+        delete from course_material where material_id = #{materialId}
+    </delete>
+
+    <delete id="deleteCourseMaterialByMaterialIds" parameterType="String">
+        delete from course_material where material_id in 
+        <foreach item="materialId" collection="array" open="(" separator="," close=")">
+            #{materialId}
+        </foreach>
+    </delete>
+
+</mapper>
